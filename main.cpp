@@ -54,14 +54,13 @@ int main()
 {
   ifstream file("data.json");
   json jf;
-  file >> jf;
   size_t size = getFilesize("data.json");
   if (size == -1)
   {
-    cout << "Please make sure that items.json is in the same directory!" << endl;
+    cout << "Please make sure that data.json is in the same directory!" << endl;
     return 0;
   }
-
+  file >> jf;
   ofstream dat("items.dat", ios::binary);
   uint32_t pos = 0;
   uint8_t *data = static_cast<uint8_t *>(malloc(size));
