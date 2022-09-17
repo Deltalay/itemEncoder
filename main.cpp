@@ -32,7 +32,7 @@ using namespace std;
 using json = nlohmann::json;
 int getFilesize(string name)
 {
-  ifstream file(name, std::ifstream::ate | std::ifstream::binary);
+  ifstream file(name, std::ios::ate | std::ios::binary);
   return file.tellg();
 }
 string encodename(string name, int id)
