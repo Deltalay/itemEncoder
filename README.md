@@ -1,5 +1,5 @@
 # itemEncoder
-Growtopia items.dat encoder.
+This is items.dat encoder for Growtopianoobs items.dat decoder.
 # Build
 ```bash 
 $ g++ main.cpp -o main
