@@ -1,5 +1,5 @@
 # itemEncoder
-Growtopia item encoder
+Growtopia items.dat encoder.
 # Build
 ```bash 
 $ g++ main.cpp -o main
