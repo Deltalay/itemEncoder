@@ -49,22 +49,21 @@ string encodename(string name, int id)
   }
   return output;
 }
-
 int main()
 {
   ifstream file("data.json");
   json jf;
+  file >> jf;
   size_t size = getFilesize("data.json");
   if (size == -1)
   {
-    cout << "Please make sure that data.json is in the same directory!" << endl;
+    cout << "Please make sure that items.json is in the same directory!" << endl;
     return 0;
   }
-  file >> jf;
   ofstream dat("items.dat", ios::binary);
   uint32_t pos = 0;
   uint8_t *data = static_cast<uint8_t *>(malloc(size));
-  auto writeData = [&](const std::string &str)
+  auto write_string = [&](const std::string &str)
   {
     uint16_t strsize = static_cast<uint16_t>(str.size());
     memcpy(data + pos, &strsize, 2);
@@ -72,13 +71,11 @@ int main()
     for (int i = 0; i < strsize; ++i)
       data[pos++] = static_cast<uint8_t>(str[i]);
   };
-
   memset(data, 0, size);
   int16_t item_version = jf["itemsdatVersion"];
   int item_count = jf["itemCount"];
   memcpy(data + pos, &item_version, 2);
   memcpy(data + pos + 2, &item_count, 4);
-
   pos += 6;
   for (int i = 0; i < item_count; i++)
   {
@@ -87,6 +84,7 @@ int main()
     memcpy(data + pos, &id, 4);
     pos += 4;
     string name = jf["items"][i]["name"];
+    cout << "Encode: " + name + ", ID: " + to_string(i) << endl;  
     int8_t m_item_category = jf["items"][i]["itemCategory"];
     uint8_t m_editable_type = jf["items"][i]["editableType"];
     memcpy(data + pos, &m_editable_type, 1);
@@ -99,13 +97,13 @@ int main()
     int hitSoundType = jf["items"][i]["hitSoundType"];
     memcpy(data + pos, &hitSoundType, 1);
     pos += 1;
-    writeData(encodename(name, id));
-    writeData(texture);
+    write_string(encodename(name, id));
+    write_string(texture);
     int textureHash = jf["items"][i]["textureHash"];
     memcpy(data + pos, &textureHash, 4);
     pos += 4;
     int itemKind = jf["items"][i]["itemKind"];
-    memcpy(data + pos, &itemKind, 1); // yes
+    memcpy(data + pos, &itemKind, 1);
     pos += 1;
     short val1 = jf["items"][i]["val1"];
     memcpy(data + pos, &val1, 4);
@@ -141,7 +139,7 @@ int main()
     memcpy(data + pos, &maxAmount, 1);
     pos += 1;
     string extraFile = jf["items"][i]["extraFile"];
-    writeData(extraFile);
+    write_string(extraFile);
     int extraFileHash = jf["items"][i]["extraFileHash"];
     memcpy(data + pos, &extraFileHash, 4);
     pos += 4;
@@ -152,10 +150,10 @@ int main()
     string petPrefix = jf["items"][i]["petPrefix"];
     string petSuffix = jf["items"][i]["petSuffix"];
     string petAbility = jf["items"][i]["petAbility"];
-    writeData(petName);
-    writeData(petPrefix);
-    writeData(petSuffix);
-    writeData(petAbility);
+    write_string(petName);
+    write_string(petPrefix);
+    write_string(petSuffix);
+    write_string(petAbility);
     int seedBase = jf["items"][i]["seedBase"];
     int seedOverlay = jf["items"][i]["seedOverlay"];
     int treeBase = jf["items"][i]["treeBase"];
@@ -175,7 +173,6 @@ int main()
     memcpy(data + pos, &seedOverlayColor, 4);
     pos += 4;
     uint32_t m_ingredient = 0;
-
     memcpy(data + pos, &m_ingredient, 4);
     pos += 4;
     int growTime = jf["items"][i]["growTime"];
@@ -190,22 +187,21 @@ int main()
     string extraOptions = jf["items"][i]["extraOptions"];
     string texture2 = jf["items"][i]["texture2"];
     string extraOptions2 = jf["items"][i]["extraOptions2"];
-    writeData(extraOptions);
-    writeData(texture2);
-    writeData(extraOptions2);
+    write_string(extraOptions);
+    write_string(texture2);
+    write_string(extraOptions2);
     uint8_t m_reserved[80] = {0};
     memcpy(data + pos, m_reserved, 80);
     pos += 80;
     string punchOptions = jf["items"][i]["punchOptions"];
     if (item_version >= 11)
     {
-      writeData(punchOptions);
+      write_string(punchOptions);
     }
     if (item_version >= 12)
     {
       pos += 13;
     }
-
     if (item_version >= 13)
     {
 
@@ -219,4 +215,5 @@ int main()
   dat.write(reinterpret_cast<char *>(data), pos);
   dat.close();
   free(data);
+  cout << "Encode successfully!" << endl;
 }
