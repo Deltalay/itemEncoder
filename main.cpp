@@ -216,4 +216,5 @@ int main()
   dat.close();
   free(data);
   cout << "Encode successfully!" << endl;
+  return 0;
 }
