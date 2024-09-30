@@ -1,7 +1,7 @@
 /*******************************************************************************
 MIT License
 
-Copyright (c) 2023 Deltalay
+Copyright (c) 2024 Deltalay
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -84,7 +84,7 @@ int main()
     memcpy(data + pos, &id, 4);
     pos += 4;
     string name = jf["items"][i]["name"];
-    cout << "Encode: " + name + ", ID: " + to_string(i) << endl;  
+    cout << "Encode: " + name + ", ID: " + to_string(i) << endl;
     int8_t m_item_category = jf["items"][i]["itemCategory"];
     uint8_t m_editable_type = jf["items"][i]["editableType"];
     memcpy(data + pos, &m_editable_type, 1);
@@ -105,7 +105,7 @@ int main()
     int itemKind = jf["items"][i]["itemKind"];
     memcpy(data + pos, &itemKind, 1);
     pos += 1;
-    short val1 = jf["items"][i]["val1"];
+    int val1 = jf["items"][i]["val1"];
     memcpy(data + pos, &val1, 4);
     pos += 4;
     int texturex = jf["items"][i]["textureX"];
@@ -210,6 +210,11 @@ int main()
     if (item_version >= 14)
     {
       pos += 4;
+    }
+    if (item_version >= 15) {
+      pos += 25;
+      int16_t strLen = *(int16_t *)&data[pos];
+      pos += 2 + strLen;
     }
   }
   dat.write(reinterpret_cast<char *>(data), pos);
